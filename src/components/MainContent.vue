@@ -1,6 +1,5 @@
 <template>
   <div class="main-content">
-    <router-view/>
     <slot />
   </div>
 </template>

@@ -1,24 +1,54 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div class="app-container">
+      <div id="nav" v-if="$route.path !== '/'">
+        <router-link to="/home">Home</router-link>
+        <router-link to="/building">BUILDING</router-link>
+        <router-link to="/mining">MINING</router-link>
+        <router-link to="/industrial">INDUSTRIAL</router-link>
+        <router-link to="/about">ABOUT</router-link>
+        <router-link to="/contact">CONTACT</router-link>
+        <div class="log-out" @click="logOut">
+          <span class="material-icons">
+            logout
+          </span>
+          <span>LOG OUT</span>
+        </div>
+      </div>
+      <MainContent class="main-content">
+        <router-view />
+      </MainContent>
     </div>
-    <router-view/>
   </div>
 </template>
 
 <style>
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+}
+
+.app-container {
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 6fr;
 }
 
 #nav {
-  padding: 30px;
+  height: 100vh;
+  width: 100%;
+  background-color: lightblue;
+  display: grid;
 }
 
 #nav a {
@@ -27,6 +57,54 @@
 }
 
 #nav a.router-link-exact-active {
-  color: #42b983;
+  color: #ffcd21;
 }
+#nav a.router-link-exact-active:hover {
+  color: #ffcd21 !important;
+}
+
+a {
+  display: grid;
+  align-items: center;
+  list-style-type: none;
+  text-decoration: none;
+}
+
+a:hover {
+  background-color: #2c3e50;
+  color: #ffffff !important;
+}
+
+.log-out {
+  display: grid;
+  margin: 0 auto;
+  grid-template-columns: 4vw 8vw;
+  align-items: center;
+  cursor: pointer;
+}
+
+@media (max-width: 990px) {
+  .app-container {
+    grid-template-columns: 2fr 6fr;
+  }
+}
+
 </style>
+<script>
+import MainContent from "./components/MainContent";
+import {fa} from "../firebaseConfig";
+export default {
+  components: {MainContent},
+  methods: {
+    logOut () {
+      fa.signOut()
+          .then(() => {
+            this.$router.replace('/')
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+    }
+  }
+}
+</script>
