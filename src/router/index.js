@@ -63,7 +63,16 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "industrial" */ '../views/Industrial.vue'),
     meta: {requiresAuth: true}
-  }
+  },
+  {
+    path: '/testrouter',
+    name: 'TestRouter',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "testrouter" */ '../views/TestRouter.vue'),
+    meta: {requiresAuth: true}
+  },
 ]
 
 const router = new VueRouter({

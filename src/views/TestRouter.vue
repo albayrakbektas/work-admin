@@ -1,5 +1,5 @@
 <template>
-  <div class="building">
+  <div class="mining">
     <EditProductForm
         v-if="isEdit"
         :cancel-form="edit"
@@ -29,7 +29,7 @@
       </form>
       <div class="loader" v-if="uploading"></div>
     </div>
-    <TestTable :product="product" :edit="edit" v-if="!isEdit" category="/building/" category-header="BUILDING" />
+    <TestTable :product="product" :edit="edit" v-if="!isEdit" category="/building/"/>
   </div>
 </template>
 
@@ -40,7 +40,7 @@ import TestTable from "@/components/TestTable";
 import EditProductForm from "@/components/EditProductForm";
 
 export default {
-  name: "Building",
+  name: "TestRouter",
   data () {
     return {
       brandValue: '',
@@ -83,10 +83,11 @@ export default {
     },
     async writeProductData() {
       this.uploading = true
+      setTimeout(() => {
+        this.uploading = false
+      },1000)
       if (this.brand !== '' && this.code !== '' && this.selectedFile !== '') {
-        await ProductService.writeProduct('building', this.code, this.brand, this.url, this.selectedFile).then(() => {
-          this.uploading = false
-        })
+        await ProductService.writeProduct('building', this.code, this.brand, this.url, this.selectedFile)
       } else {
         alert('Tum Bilgileri Giriniz..')
       }
@@ -96,7 +97,7 @@ export default {
 </script>
 
 <style scoped>
-.building {
+.mining {
   position: relative;
   height: 100%;
   width: 100%;

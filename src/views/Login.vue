@@ -47,11 +47,7 @@ export default {
   methods: {
     signIn () {
       fa.signInWithEmailAndPassword(this.email, this.password)
-      .then((res) => {
-        let user = res.user
-        let userId = fa.currentUser.uid
-        console.log(user);
-        console.log(userId);
+      .then(() => {
         this.$router.push('/home')
       })
       .catch((e) => {
