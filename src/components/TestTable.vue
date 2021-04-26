@@ -32,8 +32,6 @@
         </md-table-cell>
       </md-table-row>
     </md-table>
-    <p>Selected:</p>
-    {{ selected }} <br> CodeArray in Selected {{this.codeArray}} <br> CodeObject in codeArray {{this.codeObject}}
   </div>
 </template>
 

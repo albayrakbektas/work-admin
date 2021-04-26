@@ -5,31 +5,97 @@ import 'firebase/storage'
 import {db, fs} from '../firebaseConfig'
 
 export class ProductService {
+
+    static async deleteSector(sector){
+        await db.ref(`sector/${sector.sectorID}`).remove()
+    }
+    static async addNewSector(sector){
+        db.ref("sector").push(sector).then(()=>{
+            alert("Sector added successfully")
+        })
+    }
+
+    static async readSectors(){
+        return await new Promise(resolve => {
+            db.ref("sector").once("value").then(s=>{
+                let data = s.val();
+                if(data !== null){
+                    resolve(Object.keys(data).map(s=> {
+                        let obj = data[s]
+                        obj.sectorID = s
+                        return obj
+                    }));
+                }
+                else {
+                    resolve([])
+                }
+            })
+        });
+    }
+
+
     static async writeProduct (category, code, brand, url, selectedFile) {
-        db.ref('product/' + category + '/' + code).set({
-            brand: brand,
-            code: code,
-            url: url + code
+        return await new Promise(resolve => {
+            db.ref('product/' + category + '/' + code).set({
+                brand: brand,
+                code: code,
+                url: url  + code
+            })
+            let myFileRef = fs.ref().child(category + '/' + code).put(selectedFile)
+            myFileRef.on('state_changed',
+                (snapshot) => {
+                    let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    console.log('Upload is ' + progress + '% done')
+                },
+                (error) => {
+                    alert('Bir Hata Olustu')
+                    console.log(error);
+                },
+                () => {
+                    myFileRef.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        console.log('File available at', downloadURL);
+                        resolve()
+                    });
+                }
+            )
         })
             .then(() => {
-                let myFileRef = fs.ref().child( category + '/' + code).put(selectedFile)
-                myFileRef.on('state_changed',
-                    (snapshot) => {
-                        let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                        console.log('Upload is ' + progress + '% done')
-                    },
-                    (error) => {
-                        alert('Bir Hata Olustu')
-                        console.log(error);
-                    },
-                    () => {
-                        myFileRef.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                            this.srcImg = downloadURL
-                            this.imgOk = true
-                            console.log('File available at', downloadURL);
-                        });
-                    }
-                )
+                    location.reload()
+            })
+
+
+
+
+
+
+
+        // db.ref('product/' + category + '/' + code).set({
+        //     brand: brand,
+        //     code: code,
+        //     url: url  + code
+        // })
+        //     .then(() => {
+        //             let myFileRef = fs.ref().child(category + '/' + code).put(selectedFile)
+        //             myFileRef.on('state_changed',
+        //                 (snapshot) => {
+        //                     let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        //                     console.log('Upload is ' + progress + '% done')
+        //                 },
+        //                 (error) => {
+        //                     alert('Bir Hata Olustu')
+        //                     console.log(error);
+        //                 },
+        //                 () => {
+        //                     myFileRef.snapshot.ref.getDownloadURL().then((downloadURL) => {
+        //                         this.srcImg = downloadURL
+        //                         this.imgOk = true
+        //                         console.log('File available at', downloadURL);
+        //                     });
+        //                 }
+        //             )
+        //     })
+            .catch((err) => {
+                console.log(err);
             })
     }
     static async getProduct(category) {

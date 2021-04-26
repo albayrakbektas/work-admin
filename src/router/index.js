@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login'
+import Settings from "@/views/Settings";
 import {fb} from '../../firebaseConfig'
 import 'firebase/auth'
 
@@ -17,6 +18,12 @@ const routes = [
     path: '/home',
     name: 'Home',
     component: Home,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: Settings,
     meta: { requiresAuth: true }
   },
   {
@@ -38,41 +45,23 @@ const routes = [
     meta: {requiresAuth: true}
   },
   {
-    path: '/building',
-    name: 'Building',
+    path: '/sectors',
+    name: 'Sectors',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "building" */ '../views/Building.vue'),
+    component: () => import(/* webpackChunkName: "sectors" */ '../views/Sectors.vue'),
     meta: {requiresAuth: true}
   },
   {
-    path: '/mining',
-    name: 'Mining',
+    path: '/sectors/:id',
+    name: 'SectorDetail',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "mining" */ '../views/Mining.vue'),
+    component: () => import(/* webpackChunkName: "sectors" */ '../views/SectorDetail.vue'),
     meta: {requiresAuth: true}
-  },
-  {
-    path: '/industrial',
-    name: 'Industrial',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "industrial" */ '../views/Industrial.vue'),
-    meta: {requiresAuth: true}
-  },
-  {
-    path: '/testrouter',
-    name: 'TestRouter',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "testrouter" */ '../views/TestRouter.vue'),
-    meta: {requiresAuth: true}
-  },
+  }
 ]
 
 const router = new VueRouter({

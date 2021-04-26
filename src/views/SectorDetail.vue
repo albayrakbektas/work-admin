@@ -1,9 +1,9 @@
 <template>
-  <div class="mining">
+  <div class="building">
     <EditProductForm
         v-if="isEdit"
         :cancel-form="edit"
-        category="building"
+        :category="$route.params.id"
         :brand-value="brandValue"
         :code-value="codeValue"
         :url-value="urlValue"
@@ -20,8 +20,13 @@
           <input type="text" v-model="code" required>
         </label>
         <label>
+          Small Size:
           <input type="file" @change="previewFiles" name="file[]" multiple required>
         </label>
+<!--        <label>-->
+<!--          Large Size:-->
+<!--          <input type="file" @change="previewLargeFiles" name="file[]" multiple required>-->
+<!--        </label>-->
         <div class="button-container">
           <button type="button" @click="writeProductData">ADD</button>
           <button type="button" @click="openNewProductAdd">Cancel</button>
@@ -29,7 +34,8 @@
       </form>
       <div class="loader" v-if="uploading"></div>
     </div>
-    <TestTable :product="product" :edit="edit" v-if="!isEdit" category="/building/"/>
+    <button class="back" @click="back">BACK</button>
+    <TestTable :product="product" :edit="edit" v-if="!isEdit" :category="`/${$route.params.id}/`" :category-header="$route.params.id.toUpperCase()" />
   </div>
 </template>
 
@@ -38,9 +44,8 @@ import ProductForm from "../components/ProductForm";
 import { ProductService } from "../../Service/service";
 import TestTable from "@/components/TestTable";
 import EditProductForm from "@/components/EditProductForm";
-
 export default {
-  name: "TestRouter",
+  name: "SectorDetail",
   data () {
     return {
       brandValue: '',
@@ -53,8 +58,9 @@ export default {
       openNewAddProduct: false,
       brand: '',
       code: '',
-      url: 'gs://akinwork-dc979.appspot.com/mining/',
+      url: 'gs://akinwork-dc979.appspot.com/' + this.$route.params.id + '/',
       selectedFile: null,
+      selectedLargeFile: null,
       imgOk: false,
       srcImg: '',
       selectedProduct: []
@@ -62,8 +68,8 @@ export default {
   },
   components: {EditProductForm, TestTable, ProductForm},
   async mounted () {
-    this.product = await ProductService.getProduct('building')
-    await ProductService.getFile(this.product, 'building')
+    this.product = await ProductService.getProduct(this.$route.params.id)
+    await ProductService.getFile(this.product, this.$route.params.id)
   },
   methods: {
     edit (item) {
@@ -77,17 +83,20 @@ export default {
       this.selectedFile = event.target.files[0]
       console.log(this.selectedFile);
     },
+    back() {
+      this.$router.replace('/sectors')
+
+    },
     openNewProductAdd()
     {
       this.openNewAddProduct = !this.openNewAddProduct
     },
     async writeProductData() {
       this.uploading = true
-      setTimeout(() => {
-        this.uploading = false
-      },1000)
       if (this.brand !== '' && this.code !== '' && this.selectedFile !== '') {
-        await ProductService.writeProduct('building', this.code, this.brand, this.url, this.selectedFile)
+        await ProductService.writeProduct(this.$route.params.id, this.code, this.brand, this.url, this.selectedFile).then(() => {
+          location.reload()
+        })
       } else {
         alert('Tum Bilgileri Giriniz..')
       }
@@ -97,7 +106,7 @@ export default {
 </script>
 
 <style scoped>
-.mining {
+.building {
   position: relative;
   height: 100%;
   width: 100%;
@@ -109,7 +118,6 @@ export default {
   align-items: center;
   justify-content: center;
 }
-
 form {
   display: grid;
   grid-gap: 2vh;
@@ -118,13 +126,19 @@ form {
   height: 100%;
   width: 100%;
 }
-
 .button-container {
   width: 100%;
+  height: 2rem;
 }
-
 button {
   width: 50%;
+  height: 100%;
+  cursor: pointer;
+}
+.back {
+  height: 3rem;
+  width: 9rem;
+  margin-right: 75vw;
 }
 .loader {
   border: 16px solid #f3f3f3;
@@ -136,13 +150,11 @@ button {
   animation: spin 2s linear infinite;
   margin: 0 auto;
 }
-
 /* Safari */
 @-webkit-keyframes spin {
   0% { -webkit-transform: rotate(0deg); }
   100% { -webkit-transform: rotate(360deg); }
 }
-
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

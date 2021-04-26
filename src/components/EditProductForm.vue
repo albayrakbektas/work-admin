@@ -17,8 +17,6 @@
         <button type="button" v-on:click="cancelForm">Cancel</button>
       </div>
     </form>
-    {{brandData}} <br> {{codeData}} <br>
-    <a :href="urlData" target="_blank">Click for Image</a> {{this.urlData}}
   </div>
 </template>
 

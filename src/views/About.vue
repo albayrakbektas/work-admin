@@ -2,10 +2,19 @@
   <div class="about">
     <form>
       <label>
-        <textarea v-model="textArea"></textarea>
+        TURKISH
+        <textarea v-model="textAreaTR"></textarea>
       </label>
+      <label>
+        ENGLISH
+        <textarea v-model="textAreaEN"></textarea>
+      </label>
+      <label>
+        DEUTSCHE
+      <textarea v-model="textAreaDE"></textarea>
+    </label>
     </form>
-    <button type="submit" @click="writeData"> GÜNCELLE </button>
+    <button type="submit" @click="writeData"> UPDATE </button>
   </div>
 </template>
 
@@ -15,7 +24,9 @@ export default {
   name: "About",
   data () {
     return {
-      textArea: null
+      textAreaTR: null,
+      textAreaEN: null,
+      textAreaDE: null,
     }
   },
   async created () {
@@ -24,7 +35,9 @@ export default {
   methods: {
     writeData () {
       db.ref('about/').set({
-        textarea: this.textArea
+        tr: this.textAreaTR,
+        en: this.textAreaEN,
+        de: this.textAreaDE
       })
         .then(() => {
           window.location.reload()
@@ -32,7 +45,9 @@ export default {
     },
     getData () {
       db.ref('about/').on('value', (snapshot) => {
-        this.textArea = snapshot.val().textarea
+        this.textAreaTR = snapshot.val().tr
+        this.textAreaEN = snapshot.val().en
+        this.textAreaDE = snapshot.val().de
       })
     }
   }
@@ -40,13 +55,32 @@ export default {
 </script>
 
 <style scoped>
-textarea {
-  margin-top: 10vh;
+
+label {
+  font-size: 2rem;
+  font-weight: bold;
+}
+form {
+  width: 100%;
   height: 60vh;
-  width: 40vw;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1rem;
+  padding: 1rem 1rem 1rem 1rem;
+}
+textarea {
+  width: 100%;
+  height: 100%;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  margin-top: 2rem;
+
 }
 button {
+  cursor: pointer;
   font-size: 1.5rem;
   padding: .5rem;
+  margin-top: 4rem;
+  width: 10rem;
 }
 </style>
