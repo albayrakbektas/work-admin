@@ -7,6 +7,7 @@
         :brand-value="brandValue"
         :code-value="codeValue"
         :url-value="urlValue"
+        :large-image-url-value="largeImageUrlValue"
     />
     <ProductForm :open-inputs="openNewProductAdd" v-if="!isEdit"/>
     <div class="form" v-if="!isEdit">
@@ -20,13 +21,13 @@
           <input type="text" v-model="code" required>
         </label>
         <label>
-          Small Size:
+          <strong>Small Size:</strong>
           <input type="file" @change="previewFiles" name="file[]" multiple required>
         </label>
-<!--        <label>-->
-<!--          Large Size:-->
-<!--          <input type="file" @change="previewLargeFiles" name="file[]" multiple required>-->
-<!--        </label>-->
+        <label>
+          <strong>Large Size:</strong>
+          <input type="file" @change="previewLargeFiles" name="file[]" multiple required>
+        </label>
         <div class="button-container">
           <button type="button" @click="writeProductData">ADD</button>
           <button type="button" @click="openNewProductAdd">Cancel</button>
@@ -52,6 +53,7 @@ export default {
       codeValue: '',
       previewFile: '',
       urlValue: '',
+      largeImageUrlValue: '',
       isEdit: false,
       uploading: false,
       product: [],
@@ -59,6 +61,7 @@ export default {
       brand: '',
       code: '',
       url: 'gs://akinwork-dc979.appspot.com/' + this.$route.params.id + '/',
+      largeImageUrl: 'gs://akinwork-dc979.appspot.com/' + this.$route.params.id + '/',
       selectedFile: null,
       selectedLargeFile: null,
       imgOk: false,
@@ -76,6 +79,7 @@ export default {
       this.brandValue = item.brand
       this.codeValue = item.code
       this.urlValue = item.url
+      this.largeImageUrlValue = item.largeImageUrl
       this.isEdit = !this.isEdit
     },
     previewFiles(event)
@@ -83,9 +87,13 @@ export default {
       this.selectedFile = event.target.files[0]
       console.log(this.selectedFile);
     },
+    previewLargeFiles(event)
+    {
+      this.selectedLargeFile = event.target.files[0]
+      console.log(this.selectedLargeFile);
+    },
     back() {
       this.$router.replace('/sectors')
-
     },
     openNewProductAdd()
     {
@@ -93,12 +101,17 @@ export default {
     },
     async writeProductData() {
       this.uploading = true
-      if (this.brand !== '' && this.code !== '' && this.selectedFile !== '') {
-        await ProductService.writeProduct(this.$route.params.id, this.code, this.brand, this.url, this.selectedFile).then(() => {
+      if (this.brand !== '' && this.code !== '' && this.selectedFile !== null && this.selectedLargeFile !== null) {
+        await ProductService.writeProduct(this.$route.params.id, this.code, this.brand, this.url, this.largeImageUrl, this.selectedFile, this.selectedLargeFile).then(() => {
+          location.reload()
+        })
+      } else if (this.brand !== '' && this.code !== '' && this.selectedFile !== null && this.selectedLargeFile === null) {
+        await ProductService.writeProduct(this.$route.params.id, this.code, this.brand, this.url, this.url, this.selectedFile, this.selectedFile).then(() => {
           location.reload()
         })
       } else {
         alert('Tum Bilgileri Giriniz..')
+        this.uploading = false
       }
     },
   }
@@ -139,6 +152,11 @@ button {
   height: 3rem;
   width: 9rem;
   margin-right: 75vw;
+  font-size: 1rem;
+  font-weight: bold;
+}
+.back:hover {
+  font-size: 1.2rem;
 }
 .loader {
   border: 16px solid #f3f3f3;

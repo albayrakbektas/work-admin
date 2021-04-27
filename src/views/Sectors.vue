@@ -128,6 +128,11 @@ button {
   cursor: pointer;
   width: 50%;
   height: 100%;
+  font-size: 1.3rem;
+  font-weight: normal;
+}
+button:hover {
+  font-weight: bolder;
 }
 label {
   margin-top: 3vh;

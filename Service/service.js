@@ -34,14 +34,15 @@ export class ProductService {
     }
 
 
-    static async writeProduct (category, code, brand, url, selectedFile) {
+    static async writeProduct (category, code, brand, url, largeImageUrl, selectedFile, selectedLargeFile) {
         return await new Promise(resolve => {
             db.ref('product/' + category + '/' + code).set({
                 brand: brand,
                 code: code,
-                url: url  + code
+                url: url  + code + '/small',
+                largeImageUrl: url + code + '/large'
             })
-            let myFileRef = fs.ref().child(category + '/' + code).put(selectedFile)
+            let myFileRef = fs.ref().child(category + '/' + code + '/small').put(selectedFile)
             myFileRef.on('state_changed',
                 (snapshot) => {
                     let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
@@ -53,6 +54,22 @@ export class ProductService {
                 },
                 () => {
                     myFileRef.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        console.log('File available at', downloadURL);
+                    });
+                }
+            )
+            let myLargeFileRef = fs.ref().child(category + '/' + code + '/large').put(selectedLargeFile)
+            myLargeFileRef.on('state_changed',
+                (snapshot) => {
+                    let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    console.log('Upload is ' + progress + '% done')
+                },
+                (error) => {
+                    alert('Bir Hata Olustu')
+                    console.log(error);
+                },
+                () => {
+                    myLargeFileRef.snapshot.ref.getDownloadURL().then((downloadURL) => {
                         console.log('File available at', downloadURL);
                         resolve()
                     });
@@ -108,7 +125,8 @@ export class ProductService {
                             id: key,
                             brand: data[key].brand,
                             code: data[key].code,
-                            url: ''
+                            url: '',
+                            largeImageUrl: ''
                         }
                     }))
                 } else {
@@ -121,7 +139,7 @@ export class ProductService {
         let myArray = product.map(x => x)
         if(myArray !== null) {
             return Object.keys(product).map(key => {
-                let myRef = fs.ref('/' + category + '/' + myArray[key].code)
+                let myRef = fs.ref('/' + category + '/' + myArray[key].code + '/small')
                 myRef.getDownloadURL()
                     .then((url) => {
                         product[key].url = url

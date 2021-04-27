@@ -83,4 +83,7 @@ button {
   margin-top: 4rem;
   width: 10rem;
 }
+button:hover {
+  font-weight: bolder;
+}
 </style>

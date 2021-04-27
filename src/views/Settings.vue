@@ -157,6 +157,11 @@ button {
   width: 50%;
   height: 50%;
   cursor: pointer;
+  font-weight: normal;
+  font-size: 1.2rem;
+}
+button:hover {
+  font-weight: bolder;
 }
 .single-button {
   width: 100%;

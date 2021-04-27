@@ -7,7 +7,7 @@
           <input type="text" v-model="address">
         </label>
         <label>
-          MAP ADDRESS <br>
+          MAP LOCATION <br>
           <input type="text" v-model="map">
         </label>
         <label>
@@ -102,10 +102,11 @@ label {
 button {
   height: 5vh;
   width: 40vw;
-}
-button {
   cursor: pointer;
-  font-weight: bolder;
+  font-weight: normal;
   font-size: 1.5rem;
+}
+button:hover {
+  font-weight: bolder;
 }
 </style>
